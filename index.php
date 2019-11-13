@@ -45,16 +45,24 @@
 							<th>Status</th>
 						</tr>
 						<?php
-							$stmt = $pdo->query('SELECT id, username, email, status_id FROM users');
+							/* afficher user filtrer */
+							$status_id = 2;
+							$lettreDebut = 'e';
+							
+							$stmt = $pdo->query('SELECT users.id AS id, username, email, name 
+							                     FROM users 
+												 JOIN status 
+												 ON users.status_id = status.id 
+												 WHERE status.id = '. $status_id .'
+												 AND username LIKE \''. $lettreDebut . '%' .'\'
+												');
+												 
 							while ($row = $stmt->fetch()) {
-								$stmt2 = $pdo->query('SELECT name FROM status WHERE id = '.$row['status_id']);
-								$tmp = $stmt2->fetch();
-								
 								echo "<tr>";
 									echo "<td>". $row['id'] . "</td>";
 									echo "<td>". $row['username'] . "</td>";
 									echo "<td>". $row['email'] . "</td>";
-									echo "<td>". $tmp['name'] . "</td>";
+									echo "<td>". $row['name'] . "</td>";
 								echo "</tr>";
 							}
 						?>
