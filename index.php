@@ -37,7 +37,26 @@
 				<!-- entete -->
 				<div class="col-xs-12 cadre">
 					<h1>ALL User</h1>
-					<table>
+					
+					<!-- formulaire -->
+					<form action="index.php" method="post">
+						<!-- premiere lettre -->
+						<label>Premiere lettre : </label>
+						<input type="textbox" name="lettre"/>
+						
+						<!-- menu deroulant -->
+						<label>, status : </label>
+						<select name="status" >
+							<option value="2">Active account</option>
+							<option value="1">Waiting for account validation</option>
+						</select>
+						
+						<!-- btn submit -->
+						<input type="submit" value="submit">
+					</form>
+					
+					<!-- table resultat -->
+					<table class="table table-bordered table-striped">
 						<tr>
 							<th>ID</th>
 							<th>Username</th>
@@ -46,8 +65,12 @@
 						</tr>
 						<?php
 							/* afficher user filtrer */
-							$status_id = 2;
-							$lettreDebut = 'e';
+							$status_id = 0;
+							$lettreDebut = '0';
+							
+							if (!empty($_POST['lettre']) && isset($_POST['status'])) {
+								
+							}
 							
 							$stmt = $pdo->query('SELECT users.id AS id, username, email, name 
 							                     FROM users 
