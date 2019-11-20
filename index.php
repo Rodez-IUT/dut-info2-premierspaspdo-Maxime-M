@@ -70,20 +70,23 @@
 								$lettreDebut = $_GET['lettre'];
 								$status_id = $_GET['status'];
 								
-								$stmt = $pdo->query("SELECT users.id AS id, username, email, name 
-													 FROM users 
-												     JOIN status 
-												     ON users.status_id = status.id
-													 WHERE status.id = '$status_id'
-												     AND username LIKE '$lettreDebut%'
-												     ;");
+								$stmt = $pdo->prepare("SELECT users.id AS id, username, email, name 
+													   FROM users 
+												       JOIN status 
+												       ON users.status_id = status.id
+													   WHERE status.id = :status_id
+												       AND username LIKE :lettreDebut
+												      ;");
+								
+								$stmt->execute(['status_id' => $status_id, 
+								                'lettreDebut' => $lettreDebut.'%']);
 													 
 							} else { // sinon on affiche tout
 								$stmt = $pdo->query("SELECT users.id AS id, username, email, name 
-							                         FROM users 
-												     JOIN status 
-												     ON users.status_id = status.id 
-												     ;");
+							                           FROM users 
+												       JOIN status 
+												       ON users.status_id = status.id 
+												      ;");					  
 							}
 								
 							/* affichage */
