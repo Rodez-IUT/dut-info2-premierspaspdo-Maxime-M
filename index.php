@@ -39,7 +39,7 @@
 					<h1>ALL User</h1>
 					
 					<!-- formulaire -->
-					<form action="index.php" method="post">
+					<form action="index.php" method="GET">
 						<!-- premiere lettre -->
 						<label>Premiere lettre : </label>
 						<input type="textbox" name="lettre"/>
@@ -63,23 +63,30 @@
 							<th>Email</th>
 							<th>Status</th>
 						</tr>
+						
 						<?php
-							/* afficher user filtrer */
-							$status_id = 0;
-							$lettreDebut = '0';
-							
-							if (!empty($_POST['lettre']) && isset($_POST['status'])) {
+							/* si un filtre est mis */
+							if (isset($_GET['lettre']) && isset($_GET['status'])) {
+								$lettreDebut = $_GET['lettre'];
+								$status_id = $_GET['status'];
 								
+								$stmt = $pdo->query("SELECT users.id AS id, username, email, name 
+													 FROM users 
+												     JOIN status 
+												     ON users.status_id = status.id
+													 WHERE status.id = '$status_id'
+												     AND username LIKE '$lettreDebut%'
+												     ;");
+													 
+							} else { // sinon on affiche tout
+								$stmt = $pdo->query("SELECT users.id AS id, username, email, name 
+							                         FROM users 
+												     JOIN status 
+												     ON users.status_id = status.id 
+												     ;");
 							}
-							
-							$stmt = $pdo->query('SELECT users.id AS id, username, email, name 
-							                     FROM users 
-												 JOIN status 
-												 ON users.status_id = status.id 
-												 WHERE status.id = '. $status_id .'
-												 AND username LIKE \''. $lettreDebut . '%' .'\'
-												');
-												 
+								
+							/* affichage */
 							while ($row = $stmt->fetch()) {
 								echo "<tr>";
 									echo "<td>". $row['id'] . "</td>";
