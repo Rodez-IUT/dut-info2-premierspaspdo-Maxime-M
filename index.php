@@ -42,13 +42,14 @@
 					<form action="index.php" method="GET">
 						<!-- premiere lettre -->
 						<label>Premiere lettre : </label>
-						<input type="textbox" name="lettre"/>
+						<input type="textbox" name="lettre" value="<?php if(isset($_GET['lettre'])) {echo $_GET['lettre'];} ?>"/>
 						
 						<!-- menu deroulant -->
 						<label>, status : </label>
 						<select name="status" >
-							<option value="2">Active account</option>
 							<option value="1">Waiting for account validation</option>
+							<option value="2">Active account</option>
+							<option value="3">Waiting for account deletion</option>
 						</select>
 						
 						<!-- btn submit -->
