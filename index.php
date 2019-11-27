@@ -62,7 +62,7 @@
 							<th>ID</th>
 							<th>Username</th>
 							<th>Email</th>
-							<th>Status</th>
+							<th colspan="2">Status</th>
 						</tr>
 						
 						<?php
@@ -71,7 +71,7 @@
 								$lettreDebut = $_GET['lettre'];
 								$status_id = $_GET['status'];
 								
-								$stmt = $pdo->prepare("SELECT users.id AS id, username, email, name 
+								$stmt = $pdo->prepare("SELECT users.id AS id, username, email, name, status.id AS idStatus
 													   FROM users 
 												       JOIN status 
 												       ON users.status_id = status.id
@@ -83,11 +83,11 @@
 								                'lettreDebut' => $lettreDebut.'%']);
 													 
 							} else { // sinon on affiche tout
-								$stmt = $pdo->query("SELECT users.id AS id, username, email, name 
-							                           FROM users 
-												       JOIN status 
-												       ON users.status_id = status.id 
-												      ;");					  
+								$stmt = $pdo->query("SELECT users.id AS id, username, email, name, status.id AS idStatus
+							                         FROM users 
+												     JOIN status 
+												     ON users.status_id = status.id 
+												   ;");					  
 							}
 								
 							/* affichage */
@@ -97,6 +97,11 @@
 									echo "<td>". $row['username'] . "</td>";
 									echo "<td>". $row['email'] . "</td>";
 									echo "<td>". $row['name'] . "</td>";
+									echo "<td>";
+									if ($row['idStatus'] != 3) {
+										echo "<a href=\"index.php?status=3&user_id=".$row['id']."&action=askDeletion\">Ask deletion</a>";
+									}
+									echo "</td>";
 								echo "</tr>";
 							}
 						?>
