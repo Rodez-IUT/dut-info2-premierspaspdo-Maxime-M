@@ -68,14 +68,22 @@
 						<?php
 							/* si un ask deletion est demandé */
 							if (isset($_GET['status']) && isset($_GET['user_id']) && isset($_GET['action'])) {
-								$stmt = $pdo->prepare("INSERT INTO action_log (action_date,action_name,user_id) 
-								                       VALUES (NOW(),:action,:id);");
-								$stmt->execute(['action' => $_GET['action'], 
-								                'id' => $_GET['user_id']]);
-												
-								$stmt = $pdo->prepare("UPDATE users SET status_id = :status WHERE users.id = :id;");
-								$stmt->execute(['status' => $_GET['status'],
-								                'id' => $_GET['user_id']]);
+								/* transaction */
+								try {
+									$pdo->beginTransaction();
+									$stmt = $pdo->prepare("INSERT INTO action_log (action_date,action_name,user_id) 
+														   VALUES (NOW(),:action,:id);");
+									$stmt->execute(['action' => $_GET['action'], 
+													'id' => $_GET['user_id']]);
+													
+									$stmt = $pdo->prepare("UPDATE users SET status_id = :status WHERE users.id = :id;");
+									$stmt->execute(['status' => $_GET['status'],
+													'id' => $_GET['user_id']]);
+									$pdo->commit();
+								} catch (Exception $e){
+									$pdo->rollBack();
+									throw $e;
+								}
 							}
 						
 							/* si un filtre est mis */
@@ -94,6 +102,16 @@
 								$stmt->execute(['status_id' => $status_id, 
 								                'lettreDebut' => $lettreDebut.'%']);
 													 
+							} else if (isset($GET['action']) && isset($_GET['status'])) {
+								$stmt = $pdo->prepare("SELECT users.id AS id, username, email, name, status.id AS idStatus
+							                           FROM users 
+												       JOIN status 
+												       ON users.status_id = status.id
+													   WHERE status.id = :status_id
+												   ;");
+												   
+								$stmt->execute(['status_id' => $status_id]);
+								
 							} else { // sinon on affiche tout
 								$stmt = $pdo->query("SELECT users.id AS id, username, email, name, status.id AS idStatus
 							                         FROM users 
